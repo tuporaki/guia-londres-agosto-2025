@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva: Londres Alternativo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The application is structured as a single-page dashboard with a main navigation bar to switch between the four days of the itinerary. This thematic, day-by-day structure was chosen for its intuitive user flow, directly mirroring the user's travel plan. Each day's section presents a clear, scrollable view of activities, points of interest, and alternative markets. Key interactions include clicking on location cards to reveal detailed descriptions and practical information (hours, transport), and viewing a simple chart that visualizes the thematic focus of each day (e.g., History, Art, Culture). This design prioritizes ease of navigation and quick access to relevant information, making it a practical on-the-go guide. -->
+    <!-- Visualization & Content Choices: Report Info: Daily activities and themes. -> Goal: Inform & Organize. -> Viz/Presentation Method: Interactive cards for each location and a summary doughnut chart. -> Interaction: Clickable cards to expand/collapse details. The chart provides a high-level visual summary of the day's focus. -> Justification: Cards are excellent for organizing distinct pieces of information cleanly. A simple doughnut chart offers a quick, scannable visual cue about the day's theme without cluttering the interface. -> Library/Method: HTML/Tailwind for cards, Chart.js for the doughnut chart. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #333;
+        }
+        .nav-button {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-button.active {
+            border-bottom-color: #A58D78;
+            color: #A58D78;
+            font-weight: 600;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #EAEAEA;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .card-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.7s ease-in-out;
+        }
+        .card.open .card-details {
+            max-height: 1000px;
+        }
+        .tag {
+            background-color: #F3F4F6;
+            color: #4B5563;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 300px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-2">Londres Alternativo</h1>
+            <p class="text-lg text-gray-600">Una Guía Interactiva de 4 Días</p>
+        </header>
+
+        <nav class="flex justify-center border-b border-gray-200 mb-12">
+            <button class="nav-button active py-4 px-6 text-gray-600" onclick="showSection('day1')">Día 1: Legal y Literario</button>
+            <button class="nav-button py-4 px-6 text-gray-600" onclick="showSection('day2')">Día 2: Saber y Secretos</button>
+            <button class="nav-button py-4 px-6 text-gray-600" onclick="showSection('day3')">Día 3: Arte y Cultura</button>
+            <button class="nav-button py-4 px-6 text-gray-600" onclick="showSection('day4')">Día 4: Carnaval</button>
+        </nav>
+
+        <main>
+            <!-- Día 1 -->
+            <section id="day1" class="content-section active">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">El Londres Legal, Literario y Creativo</h2>
+                    <p class="max-w-3xl mx-auto text-gray-600">Este día se centra en explorar a pie la histórica zona de Chancery Lane. Descubrirá los pilares del derecho inglés, seguirá los pasos de Charles Dickens y se sumergirá en colecciones de arte únicas, todo ello rodeado de una arquitectura que cuenta siglos de historia.</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="card rounded-lg shadow-sm cursor-pointer" onclick="toggleCard(this)">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Mañana: La Cuna del Derecho</h3>
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="tag px-2 py-1 rounded-full">Historia</span>
+                                <span class="tag px-2 py-1 rounded-full">Arquitectura</span>
+                            </div>
+                            <p class="text-gray-600">Un paseo por las Royal Courts of Justice, los Inns of Court y el peculiar Sir John Soane's Museum.</p>
+                            <div class="card-details mt-4 text-gray-700 space-y-3">
+                                <p><strong>Lugares:</strong> Royal Courts of Justice, Temple (Inner & Middle), Lincoln's Inn, Sir John Soane's Museum.</p>
+                                <p><strong>Detalles:</strong> Admire la arquitectura neogótica, explore los tranquilos recintos de los abogados que datan del siglo XIV y maravíllese con la ecléctica colección de Sir John Soane.</p>
+                                <p><strong>Transporte:</strong> Metro a Temple, Holborn o Chancery Lane.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card rounded-lg shadow-sm cursor-pointer" onclick="toggleCard(this)">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Mediodía: Descanso con Historia</h3>
+                             <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="tag px-2 py-1 rounded-full">Gastronomía</span>
+                                <span class="tag px-2 py-1 rounded-full">Historia</span>
+                            </div>
+                            <p class="text-gray-600">Almuerzo en un pub legendario y visita a una de las iglesias católicas más antiguas de Inglaterra.</p>
+                            <div class="card-details mt-4 text-gray-700 space-y-3">
+                                <p><strong>Lugares:</strong> Ye Olde Cheshire Cheese, St. Etheldreda's Church.</p>
+                                <p><strong>Detalles:</strong> Disfrute de la atmósfera de un pub reconstruido en 1666 y frecuentado por gigantes literarios. Luego, encuentre paz en una iglesia con raíces en 1290.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card rounded-lg shadow-sm cursor-pointer" onclick="toggleCard(this)">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Tarde: El Hogar de Dickens</h3>
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="tag px-2 py-1 rounded-full">Literatura</span>
+                                <span class="tag px-2 py-1 rounded-full">Vida Victoriana</span>
+                            </div>
+                            <p class="text-gray-600">Visita a la casa donde Charles Dickens escribió algunas de sus obras más famosas.</p>
+                            <div class="card-details mt-4 text-gray-700 space-y-3">
+                                <p><strong>Lugar:</strong> Charles Dickens Museum.</p>
+                                <p><strong>Detalles:</strong> Sumérjase en el mundo victoriano y vea dónde nacieron 'Oliver Twist' y 'Nicholas Nickleby'.</p>
+                                <p><strong>Transporte:</strong> Metro a Russell Square.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card rounded-lg shadow-sm cursor-pointer lg:col-span-3" onclick="toggleCard(this)">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Mercado Alternativo: Leather Lane</h3>
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="tag px-2 py-1 rounded-full">Mercado</span>
+                                <span class="tag px-2 py-1 rounded-full">Local</span>
+                            </div>
+                            <p class="text-gray-600">Un mercado vibrante y auténtico, perfecto para el almuerzo, con una gran variedad de comida callejera.</p>
+                            <div class="card-details mt-4 text-gray-700 space-y-3">
+                                 <p><strong>Horario:</strong> Lunes a Viernes, 10:00 - 16:00.</p>
+                                 <p><strong>Detalles:</strong> Una joya oculta que ofrece una visión de la vida diaria y la diversidad culinaria de Londres, lejos de las multitudes turísticas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Día 2 -->
+            <section id="day2" class="content-section">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">El Saber de Bloomsbury y los Secretos de la Medicina</h2>
+                    <p class="max-w-3xl mx-auto text-gray-600">Explore el epicentro intelectual de Londres. Este día le llevará a través de colecciones que albergan tesoros de la humanidad y curiosidades médicas, ofreciendo una perspectiva única sobre el conocimiento, el arte y la vida.</p>
+                </div>
+                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="card rounded-lg shadow-sm cursor-pointer" onclick="toggleCard(this)">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Mañana: Tesoros del Mundo</h3>
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="tag px-2 py-1 rounded-full">Museo</span>
+                                <span class="tag px-2 py-1 rounded-full">Historia Mundial</span>
+                            </div>
+                            <p class="text-gray-600">Visita al British Museum y la British Library, centrándose en salas menos concurridas y tesoros únicos.</p>
+                            <div class="card-details mt-4 text-gray-700 space-y-3">
+                                <p><strong>Lugares:</strong> British Museum, British Library.</p>
+                                <p><strong>Sugerencia:</strong> En el British Museum, explore las colecciones de África u Oceanía. En la British Library, no se pierda la Carta Magna ni los manuscritos de los Beatles.</p>
+                                <p><strong>Transporte:</strong> Metro a Tottenham Court Road o Russell Square.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card rounded-lg shadow-sm cursor-pointer" onclick="toggleCard(this)">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Mediodía: Paseo Georgiano</h3>
+                             <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="tag px-2 py-1 rounded-full">Relax</span>
+                                <span class="tag px-2 py-1 rounded-full">Parque</span>
+                            </div>
+                            <p class="text-gray-600">Un descanso tranquilo en Russell Square, una de las plazas ajardinadas más emblemáticas de Bloomsbury.</p>
+                            <div class="card-details mt-4 text-gray-700 space-y-3">
+                                <p><strong>Lugar:</strong> Russell Square.</p>
+                                <p><strong>Detalles:</strong> Disfrute de los jardines diseñados originalmente por Humphry Repton y de la atmósfera de una plaza con residentes históricos como T.S. Eliot.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card rounded-lg shadow-sm cursor-pointer" onclick="toggleCard(this)">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Tarde: Lo Inesperado</h3>
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="tag px-2 py-1 rounded-full">Ciencia</span>
+                                <span class="tag px-2 py-1 rounded-full">Arte</span>
+                                <span class="tag px-2 py-1 rounded-full">Ocio</span>
+                            </div>
+                            <p class="text-gray-600">Explore las fascinantes conexiones entre medicina y arte en la Wellcome Collection y termine con bolos retro.</p>
+                            <div class="card-details mt-4 text-gray-700 space-y-3">
+                                <p><strong>Lugares:</strong> Wellcome Collection, Bloomsbury Lanes.</p>
+                                <p><strong>Detalles:</strong> Un museo para los "incurablemente curiosos" seguido de una divertida noche en una bolera con estética de los años 50.</p>
+                                 <p><strong>Transporte:</strong> Metro a Euston Square o Warren Street.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Día 3 -->
+            <section id="day3" class="content-section">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Arte Callejero y Cultura Alternativa</h2>
+                    <p class="max-w-3xl mx-auto text-gray-600">Sumérjase en el vibrante East London. Este día es una inmersión en la cultura del arte urbano, los sabores internacionales de sus mercados y experiencias únicas que capturan la historia de un barrio en constante evolución.</p>
+                </div>
+                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="card rounded-lg shadow-sm cursor-pointer" onclick="toggleCard(this)">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Mañana: Galería al Aire Libre</h3>
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="tag px-2 py-1 rounded-full">Arte Urbano</span>
+                                <span class="tag px-2 py-1 rounded-full">Shoreditch</span>
+                            </div>
+                            <p class="text-gray-600">Un recorrido por Shoreditch para descubrir los murales de artistas como Banksy, ROA y Stik.</p>
+                            <div class="card-details mt-4 text-gray-700 space-y-3">
+                                <p><strong>Lugares:</strong> Brick Lane, Hanbury Street, Rivington Street.</p>
+                                <p><strong>Detalles:</strong> Explore el epicentro del arte callejero de Londres, un lienzo dinámico que refleja el espíritu creativo y la crítica social.</p>
+                                <p><strong>Transporte:</strong> Overground a Shoreditch High Street o Metro a Liverpool Street.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card rounded-lg shadow-sm cursor-pointer" onclick="toggleCard(this)">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Mediodía: Sabores del Mundo</h3>
+                             <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="tag px-2 py-1 rounded-full">Mercado</span>
+                                <span class="tag px-2 py-1 rounded-full">Comida Callejera</span>
+                            </div>
+                            <p class="text-gray-600">Disfrute de la comida callejera de Brick Lane Market y pruebe un legendario 'beigel' de Beigel Bake.</p>
+                            <div class="card-details mt-4 text-gray-700 space-y-3">
+                                <p><strong>Lugares:</strong> Brick Lane Market, Beigel Bake.</p>
+                                <p><strong>Detalles:</strong> Un festín para los sentidos con curries, sabores internacionales y el famoso 'beigel' de ternera salada, un clásico abierto 24 horas.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card rounded-lg shadow-sm cursor-pointer" onclick="toggleCard(this)">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Tarde: Experiencias Únicas</h3>
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="tag px-2 py-1 rounded-full">Mercado de Flores</span>
+                                <span class="tag px-2 py-1 rounded-full">Inmersivo</span>
+                            </div>
+                            <p class="text-gray-600">Visite el Columbia Road Flower Market (solo domingos) o la mágica Dennis Severs' House.</p>
+                            <div class="card-details mt-4 text-gray-700 space-y-3">
+                                <p><strong>Lugares:</strong> Columbia Road Flower Market, Boxpark Shoreditch, Dennis Severs' House.</p>
+                                <p><strong>Detalles:</strong> Elija entre un mar de flores, un centro comercial de contenedores o un viaje en el tiempo a una casa del siglo XVIII iluminada por velas.</p>
+                                <p><strong>Nota:</strong> Dennis Severs' House requiere reserva previa.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Día 4 -->
+            <section id="day4" class="content-section">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">El Carnaval de Notting Hill</h2>
+                    <p class="max-w-3xl mx-auto text-gray-600">El último día está dedicado al festival callejero más grande de Europa. Una explosión de color, música y sabor que celebra la cultura caribeña y la identidad afrocaribeña de Londres. Prepárese para una experiencia inolvidable.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-8 max-w-4xl mx-auto">
+                    <div class="md:flex md:gap-8">
+                        <div class="md:w-2/3 space-y-6">
+                             <div>
+                                <h3 class="text-2xl font-semibold text-gray-800 mb-3">Una Celebración de Cultura y Resiliencia</h3>
+                                <p class="text-gray-700">Nacido en 1966 como respuesta a la tensión racial, el carnaval es un poderoso acto de afirmación cultural. Disfrute de los desfiles, las bandas de *steelpan* y los más de 30 sistemas de sonido que llenan las calles con soca, reggae y afrobeat.</p>
+                            </div>
+                             <div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">Qué Esperar</h3>
+                                <ul class="list-disc list-inside text-gray-700 space-y-2">
+                                    <li><strong>Domingo:</strong> Día de la Familia, con desfiles más tranquilos.</li>
+                                    <li><strong>Lunes:</strong> Día de los Adultos, con la gran parada y la música más fuerte.</li>
+                                    <li><strong>Comida:</strong> No se pierda el delicioso *jerk chicken* y el *roti* de los puestos callejeros.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">Consejos Prácticos</h3>
+                                <ul class="list-disc list-inside text-gray-700 space-y-2">
+                                    <li><strong>Transporte:</strong> Planifique con antelación. Muchas estaciones de metro cercanas cierran o cambian de horario. Holland Park suele ser la mejor opción.</li>
+                                    <li><strong>Seguridad:</strong> Manténgase hidratado, use calzado cómodo, vigile sus pertenencias y acuerde un punto de encuentro.</li>
+                                    <li><strong>Niños:</strong> Escriba su número de teléfono en el brazo de su hijo/a.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="md:w-1/3 mt-8 md:mt-0">
+                            <div class="chart-container">
+                                <canvas id="carnivalChart"></canvas>
+                            </div>
+                             <p class="text-center text-sm text-gray-500 mt-2">Foco de la Experiencia</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        let currentChart = null;
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            document.querySelectorAll('.nav-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            document.querySelector(`button[onclick="showSection('${sectionId}')"]`).classList.add('active');
+            
+            if (sectionId === 'day4') {
+                renderCarnivalChart();
+            }
+        }
+
+        function toggleCard(cardElement) {
+            cardElement.classList.toggle('open');
+        }
+
+        function renderCarnivalChart() {
+            const ctx = document.getElementById('carnivalChart').getContext('2d');
+            if (currentChart) {
+                currentChart.destroy();
+            }
+            currentChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Música', 'Cultura', 'Comida'],
+                    datasets: [{
+                        data: [45, 35, 20],
+                        backgroundColor: [
+                            '#D1C4E9', // A soft purple
+                            '#A5D6A7', // A soft green
+                            '#FFCC80'  // A soft orange
+                        ],
+                        borderColor: '#FDFBF8',
+                        borderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#333',
+                                font: {
+                                    family: "'Inter', sans-serif"
+                                }
+                            }
+                        },
+                        tooltip: {
+                             callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('day1');
+        });
+
+    </script>
+</body>
+</html>
